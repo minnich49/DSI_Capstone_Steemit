@@ -1,2 +1,7 @@
 images/
 data/
+word2vec_models/
+
+*.ipynb_checkpoints
+*installodbc.sh
+.idea/
