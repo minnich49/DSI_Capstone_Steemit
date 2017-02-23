@@ -4,6 +4,8 @@ import sys
 import pandas as pd
 import joblib
 
+data_directory = '../data/'
+
 def ensure_directory(directory):
     directory = '../data/' + directory
     print directory
@@ -15,11 +17,15 @@ def ensure_directories(dir_list):
     for directory in dir_list:
         ensure_directory(directory)
 
-
-data_directory = '../data/'
-
+def check_for_dir_python_path():
+    module_directory = os.path.join(
+        os.getcwd().split('DSI_Capstone_Steemit')[0])
+    if module_directory not in sys.path:
+        sys.path.insert(1, module_directory)
 
 def load_data_and_description(data_type = 'tfidf'):
+    # check_for_dir_python_path()
+
     if data_type == 'tfidf':
         file_name = 'posts_tfidf'
         feature_names = 'posts_tfidf_feature_names'
@@ -48,5 +54,6 @@ def load_data_and_description(data_type = 'tfidf'):
         feature_names = joblib.load(feature_path)
 
     return data,feature_names,data_desc
+
 
 
