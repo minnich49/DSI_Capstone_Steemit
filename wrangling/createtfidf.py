@@ -1,10 +1,11 @@
+
 import pymssql
 import pandas as pd
 import numpy as np
 import os
 import re
 import joblib
-# import csv
+import csv
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
@@ -39,7 +40,10 @@ tfidfvect = TfidfVectorizer(
 print 'READ IN DATA'
 # set the data path
 data_directory = '../data/'
+
+
 posts_path = os.path.join(data_directory,'posts_raw_cleaned','posts_raw_cleaned.csv') # full data set
+
 df_posts_full = pd.read_csv(posts_path, na_values=[" "])
 df_posts = df_posts_full
 
