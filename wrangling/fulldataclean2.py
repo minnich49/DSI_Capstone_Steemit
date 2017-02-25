@@ -1,9 +1,7 @@
 import os
 import sys
 import csv
-import pymssql
 import pandas as pd
-import numpy as np
 import re
 import joblib
 import nltk
@@ -17,9 +15,16 @@ import HTMLParser
 print 'READ IN DATA'
 # set the data path
 data_directory = '../data/'
-posts_path = os.path.join(data_directory,'sample_29k_pos_values.csv') # full data set
-df_posts_full = pd.read_csv(posts_path)
-df_posts = df_posts_full
+
+sample_data = False
+
+if sample_data:
+    posts_path = os.path.join(data_directory,'sample_29k_pos_values.csv')
+else:
+    posts_path = os.path.join(data_directory,'all_posts.csv')
+df_posts = pd.read_csv(posts_path)
+# Remove blank articles
+df_posts =  df_posts[df_posts['body'].notnull()]
 
 #########################
 # Combined data
@@ -27,7 +32,10 @@ df_posts = df_posts_full
 print 'CREATING A NEW CLEAN DATASET'
 
 # Combine multiple updates to articles to get one body per post
-combined_body = df_posts.groupby(['author','permlink']).agg(lambda x: ''.join(set(x))).reset_index()
+combined_body = (df_posts.groupby(['author','permlink'])
+                 .agg(lambda x: ''.join(set(x)))
+                 .reset_index()
+                 )
 combined_body = combined_body.ix[:,['body','author','permlink']]
 
 # Remove Duplicates
@@ -102,8 +110,9 @@ def removesymbols(x):
 df_posts['body'] = df_posts.apply(lambda x: removesymbols(x['body']), axis=1)
 
 # Remove ascii stuff
-df_posts['body'] = df_posts['body'].str.decode('unicode_escape').str.encode('ascii', 'ignore')
-# df_posts['body'] = df_posts.apply(lambda row: row['body'].decode('unicode_escape').encode('ascii', 'ignore'), axis=1)
+df_posts['body'] = (df_posts['body']
+                    .str.decode('unicode_escape')
+                    .str.encode('ascii', 'ignore'))
 
 
 # Remove all periods
@@ -138,7 +147,7 @@ df_posts['body'] = df_posts['body'].str.decode('unicode_escape').str.encode('asc
 posts_raw_cleaned = os.path.join(data_directory,
                                              'posts_raw_cleaned', 
                                              'posts_raw_cleaned.csv')
-print 'READING TO FILE'
+print 'WRITING TO FILE'
 df_posts.to_csv(posts_raw_cleaned,
                               index=False, 
                               quoting=csv.QUOTE_ALL, 
