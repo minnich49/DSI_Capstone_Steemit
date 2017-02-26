@@ -33,7 +33,7 @@ def load_data_and_description(data_type = 'tfidf'):
 
     if data_type == 'tfidf':
         directory = 'posts_tfidf'
-        file_name = directory + '.pkl'
+        file_name = 'posts_tfidf.pkl'
         feature_names = 'posts_tfidf_feature_names'
         desc_file = 'posts_tfidf_desc.csv'
 
@@ -42,7 +42,8 @@ def load_data_and_description(data_type = 'tfidf'):
         feature_names = 'word2vec_doc_matrix_avg_feature_names'
         desc_file = 'word2vec_doc_matrix_avg_desc.csv'
     else:
-        file_name = 'posts_counts'
+        directory = 'posts_counts'
+        file_name = 'posts_counts.pkl'
         feature_names = 'posts_counts_feature_names'
         desc_file = 'posts_counts_desc.csv'
 

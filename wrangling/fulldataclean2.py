@@ -7,6 +7,10 @@ import joblib
 import nltk
 from nltk.tokenize import word_tokenize
 import HTMLParser
+from bs4 import BeautifulSoup
+from markdown import markdown
+import urllib2
+
 
 #########################
 # LOAD DATA
@@ -48,11 +52,16 @@ df_posts = pd.merge(df_posts,combined_body,on=['author','permlink'])
 
 df_posts.sort_values(by='total_payout_value',ascending=False,inplace=True)
 
-
 #################################
 # Create new features
 #################################
 print 'CREATING NEW FEATURES'
+
+
+
+#Encode to unicode so that Beautiful Soup can work properly
+df_posts['body'] = df_posts['body'].str.decode('utf-8')
+
 expression = r'http\S+'
 # Extract all Links
 df_posts['body urls'] = df_posts['body'].str.findall(expression)
@@ -78,11 +87,30 @@ df_posts['body mentions'] = df_posts['body'].str.findall(expression)
 df_posts['number of body mentions'] = df_posts['body mentions'].apply(len)
 
 
+# Removes html,markdown, percent encoding
+def remove_html_markdown(x):
+    html = markdown(x)
+    raw = BeautifulSoup(html,'lxml').get_text()
+#     text = ' '.join(BeautifulSoup(html).findAll(text=True))
+    output = urllib2.unquote(raw)
+    return output
+
+df_posts['body'] = df_posts.apply(lambda x: remove_html_markdown(x['body']), axis=1)
+
+
+# # # Remove all new lines
+expression = r'\n'
+df_posts['body'] = df_posts['body'].str.replace(expression,' ')
+
+# Remove unicode junk
+df_posts['body'] = (df_posts['body']
+                    .str.encode('ascii', 'ignore'))
+
 ############################
 # CLEAN DATA
 ############################
 print 'CLEANING DATA'
-#START CLEANING TEXT -- 
+#START CLEANING TEXT --
 # 1. html removal
 # 2. words, and numbers
 # 3. symbols ',!
@@ -90,15 +118,15 @@ print 'CLEANING DATA'
 
 # Remove Links
 expression = r'http\S+'
-df_posts['body'] = df_posts['body'].str.replace(expression,'')
+df_posts['body'] = df_posts['body'].str.replace(expression,' ')
 
 # Remove all Hash Tags
 expression = '#(\S+)'
-df_posts['body'] = df_posts['body'].str.replace(expression,'')
+df_posts['body'] = df_posts['body'].str.replace(expression,' ')
 
 # Remove all Tags
 expression = '@(\S+)'
-df_posts['body'] = df_posts['body'].str.replace(expression,'')
+df_posts['body'] = df_posts['body'].str.replace(expression,' ')
 
 def removesymbols(x):
     x = re.sub("[\W\d]+"," ", x.strip())
@@ -109,39 +137,14 @@ def removesymbols(x):
 # df_posts['body'] = df_posts['body'].apply(lambda x: removesymbols(x), axis=1)
 df_posts['body'] = df_posts.apply(lambda x: removesymbols(x['body']), axis=1)
 
-# Remove ascii stuff
-df_posts['body'] = (df_posts['body']
-                    .str.decode('unicode_escape')
-                    .str.encode('ascii', 'ignore'))
+
+# Remove Any Capital Letter by themselves A, B, C, D etc
+# These are usually removed anyways during stemming but seems to be some
+# residuals left over
+expression = r'\b[A-Z]\b|\b[a-z]\b'
+df_posts['body'] = df_posts['body'].str.replace(expression,' ')
 
 
-# Remove all periods
-# expression = '\.'
-# df_posts['body'] = df_posts['body'].str.replace(expression,' ')
-
-# # # Remove all new lines
-# expression = r'\n'
-# df_posts['body'] = df_posts['body'].str.replace(expression,' ')
-
-
-# # Remove Any Capital Letter by themselves A, B, C, D etc
-# expression = r'\b[A-Z]\b'
-# df_posts['body'] = df_posts['body'].str.replace(expression,'')
-
-# # Remove double spaces
-# expression = ' +'
-# df_posts['body'] = df_posts['body'].str.replace(expression,' ')
-
-# # Remove pure numerical values that have greater than 5 digits
-# expression = r'\b[0-9]{5,100}\b'
-# df_posts['body'] = df_posts['body'].str.replace(expression,'')
-
-# # Remove all non alpha numeric
-# expression = '[^A-Za-z0-9 ]+'
-# df_posts['body'] = df_posts['body'].str.replace(expression,'')
-
-# expression = '0A0A'
-# df_posts['body'] = df_posts['body'].str.replace(expression,' ')
 
 
 posts_raw_cleaned = os.path.join(data_directory,
