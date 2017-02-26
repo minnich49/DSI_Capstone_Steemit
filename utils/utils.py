@@ -27,7 +27,7 @@ def load_data_and_description(data_type = 'tfidf'):
     # check_for_dir_python_path()
 
     if data_type == 'tfidf':
-        file_name = 'posts_tfidf'
+        file_name = 'posts_tfidf.pkl'
         feature_names = 'posts_tfidf_feature_names'
         desc_file = 'posts_tfidf_desc.csv'
 
