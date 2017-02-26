@@ -68,3 +68,24 @@ df_posts.to_csv(posts_tfidf_desc_path,
                               index=False, 
                               quoting=csv.QUOTE_ALL, 
                               encoding='utf-8')
+
+
+print 'Counts'
+df_posts["body"].fillna(' ', inplace=True)
+posts_counts = countvect.fit_transform(df_posts['body'])
+
+posts_counts_path = os.path.join(data_directory,'posts_counts')
+
+joblib.dump(posts_counts,
+            os.path.join(posts_counts_path,'posts_counts.pkl'))
+
+joblib.dump(countvect.get_feature_names(),
+            os.path.join(posts_counts_path,'posts_counts_feature_names'))
+
+posts_counts_desc_path = os.path.join(posts_counts_path, 'posts_counts_desc.csv')
+
+
+df_posts.to_csv(posts_counts_desc_path,
+                              index=False, 
+                              quoting=csv.QUOTE_ALL, 
+                              encoding='utf-8')
