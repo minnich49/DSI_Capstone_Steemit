@@ -42,22 +42,20 @@ print 'READ IN DATA'
 data_directory = '../data/'
 
 
-posts_path = os.path.join(data_directory,'posts_raw_cleaned','posts_raw_cleaned.csv') # full data set
+posts_path = os.path.join(data_directory,
+                          'posts_raw_cleaned',
+                          'posts_raw_cleaned.csv') # full data set
 
 df_posts_full = pd.read_csv(posts_path, na_values=[" "])
 df_posts = df_posts_full
 
 print 'TFIDF'
-
-# df_posts['body'] = df_posts['body'].dropna() 
 df_posts["body"].fillna(' ', inplace=True)
-# posts_counts = countvect.fit_transform(df_posts['body'])
 posts_tfidf = tfidfvect.fit_transform(df_posts['body'])
 
-# posts_counts_path = os.path.join(data_directory,'posts_counts', 'posts_counts')
-posts_tfidf_path = os.path.join(data_directory,'posts_tfidf','posts_tfidf_full.pkl')
+posts_tfidf_path = os.path.join(data_directory,'posts_tfidf','posts_tfidf.pkl')
 joblib.dump(posts_tfidf,posts_tfidf_path)
-# joblib.dump(tfidfvect.get_feature_names(),posts_tfidf_path+'_feature_names')
+joblib.dump(tfidfvect.get_feature_names(),posts_tfidf_path+'_feature_names')
 
 posts_tfidf_desc_path = os.path.join(data_directory,
                                              'posts_tfidf', 
