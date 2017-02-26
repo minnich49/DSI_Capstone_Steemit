@@ -23,6 +23,11 @@ def check_for_dir_python_path():
     if module_directory not in sys.path:
         sys.path.insert(1, module_directory)
 
+def load_raw():
+    posts_path = os.path.join(data_directory, 'posts_raw_cleaned',
+                              'posts_raw_cleaned.csv')
+    df_posts = pd.read_csv(posts_path)
+    return df_posts
 def load_data_and_description(data_type = 'tfidf'):
     # check_for_dir_python_path()
 
