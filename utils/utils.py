@@ -27,7 +27,8 @@ def load_data_and_description(data_type = 'tfidf'):
     # check_for_dir_python_path()
 
     if data_type == 'tfidf':
-        file_name = 'posts_tfidf.pkl'
+        directory = 'posts_tfidf'
+        file_name = directory + '.pkl'
         feature_names = 'posts_tfidf_feature_names'
         desc_file = 'posts_tfidf_desc.csv'
 
@@ -40,9 +41,9 @@ def load_data_and_description(data_type = 'tfidf'):
         feature_names = 'posts_counts_feature_names'
         desc_file = 'posts_counts_desc.csv'
 
-    data_path = os.path.join(data_directory,file_name,file_name)
-    feature_path = os.path.join(data_directory,file_name,feature_names)
-    desc_path = os.path.join(data_directory, file_name,desc_file)
+    data_path = os.path.join(data_directory,directory,file_name)
+    feature_path = os.path.join(data_directory,directory,feature_names)
+    desc_path = os.path.join(data_directory, directory,desc_file)
 
     data = joblib.load(data_path)
     data_desc = pd.read_csv(desc_path)

@@ -53,13 +53,15 @@ print 'TFIDF'
 df_posts["body"].fillna(' ', inplace=True)
 posts_tfidf = tfidfvect.fit_transform(df_posts['body'])
 
-posts_tfidf_path = os.path.join(data_directory,'posts_tfidf','posts_tfidf.pkl')
-joblib.dump(posts_tfidf,posts_tfidf_path)
-joblib.dump(tfidfvect.get_feature_names(),posts_tfidf_path+'_feature_names')
+posts_tfidf_path = os.path.join(data_directory,'posts_tfidf')
 
-posts_tfidf_desc_path = os.path.join(data_directory,
-                                             'posts_tfidf', 
-                                             'posts_tfidf_desc.csv')
+joblib.dump(posts_tfidf,
+            os.path.join(posts_tfidf_path,'posts_tfidf.pkl'))
+
+joblib.dump(tfidfvect.get_feature_names(),
+            os.path.join(posts_tfidf_path,'posts_tfidf_feature_names'))
+
+posts_tfidf_desc_path = os.path.join(posts_tfidf_path, 'posts_tfidf_desc.csv')
 
 
 df_posts.to_csv(posts_tfidf_desc_path,
