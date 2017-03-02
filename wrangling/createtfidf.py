@@ -25,7 +25,7 @@ countvect = CountVectorizer(
     encoding = 'utf-8',
     tokenizer = PorterTokenizer(),
     stop_words = stopwords.words('english'),
-    lowercase = False
+    lowercase = True
     
 )
 
@@ -33,7 +33,7 @@ tfidfvect = TfidfVectorizer(
     encoding = 'utf-8',
     tokenizer = PorterTokenizer(),
     stop_words = stopwords.words('english'),
-    lowercase = False
+    lowercase = True
     
 )
 
