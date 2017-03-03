@@ -12,7 +12,7 @@ from nltk.stem import PorterStemmer
 from nltk import word_tokenize 
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer
-
+from nltk.stem.wordnet import WordNetLemmatizer
 
 porter =  PorterStemmer()
 class PorterTokenizer(object):
@@ -20,6 +20,14 @@ class PorterTokenizer(object):
         self.porter = porter.stem
     def __call__(self, doc):
         return [self.porter(t) for t in word_tokenize(doc)]
+
+lmtzr = WordNetLemmatizer()
+class WordNetLemmatizer(object):
+    def __init__(self):
+        self.lmtzr = lmtzr.lemmatize    
+    def __call__(self, doc):
+        return [self.lmtzr(t) for t in word_tokenize(doc)]
+
 
 countvect = CountVectorizer(
     encoding = 'utf-8',
@@ -31,7 +39,8 @@ countvect = CountVectorizer(
 
 tfidfvect = TfidfVectorizer(
     encoding = 'utf-8',
-    tokenizer = PorterTokenizer(),
+    tokenizer = WordNetLemmatizer(),
+    # tokenizer = PorterTokenizer(),
     stop_words = stopwords.words('english'),
     lowercase = True
     
