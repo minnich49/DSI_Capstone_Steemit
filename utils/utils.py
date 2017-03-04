@@ -35,24 +35,26 @@ def load_data_and_description(data_type = 'tfidf'):
         directory = 'posts_tfidf'
         file_name = 'posts_tfidf.pkl'
         feature_names = 'posts_tfidf_feature_names'
-        desc_file = 'posts_tfidf_desc.csv'
 
     elif data_type == 'word2vec':
         file_name = 'word2vec_doc_matrix_avg'
         feature_names = 'word2vec_doc_matrix_avg_feature_names'
-        desc_file = 'word2vec_doc_matrix_avg_desc.csv'
     else:
         directory = 'posts_counts'
         file_name = 'posts_counts.pkl'
         feature_names = 'posts_counts_feature_names'
-        desc_file = 'posts_counts_desc.csv'
+
+
+    desc_file = os.path.join(data_directory,
+                             'posts_cleaned_features',
+                             'posts_cleaned_features.csv')
+
 
     data_path = os.path.join(data_directory,directory,file_name)
     feature_path = os.path.join(data_directory,directory,feature_names)
-    desc_path = os.path.join(data_directory, directory,desc_file)
 
     data = joblib.load(data_path)
-    data_desc = pd.read_csv(desc_path)
+    data_desc = pd.read_csv(desc_file)
 
     # Do not have feature names for word2vec matrices
     if data_type == 'word2vec':
