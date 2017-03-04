@@ -1,35 +1,79 @@
-import pymssql
 import pandas as pd
 import numpy as np
 import os
-import re
-import joblib
-import csv
 
+import csv
+import json
+import sys
 
 print 'READ IN DATA'
 # set the data path
 data_directory = '../data/'
 
-new_feature_data_path = '' # add where we will save this
+data_directory = '../data/'
+data_directory = os.path.join('..' ,'data')
 
+authors = pd.read_csv(os.path.join(data_directory,'accounts.csv'))
+
+
+
+print os.path.join(data_directory,'accounts.csv')
+authors = pd.read_csv(os.path.join(data_directory,'accounts.csv'))
+posts_raw_cleaned = pd.read_csv(os.path.join(data_directory,
+                                             'posts_raw_cleaned',
+                                             'posts_raw_cleaned.csv'))
+# Output File
+output_file = os.path.join(data_directory,
+                           'posts_cleaned_features',
+                           'posts_cleaned_features.csv')
+
+# Add number of times steem is found within the body
+steem_counts = posts_raw_cleaned['body'].str.lower().str.count('steem')
+posts_raw_cleaned['number of steem counts'] = steem_counts
+
+# A flag authors that are in the top 5%
+percent = np.percentile(authors['reputation'],95)
+top_95_idx = (authors['reputation'] > percent)
+whale_list = authors.ix[top_95_idx,'name'].values
+posts_raw_cleaned['whale'] = posts_raw_cleaned['author'].isin(whale_list).astype(int)
+
+
+# Flag where whale is the author
+posts_raw_cleaned['whale'] = posts_raw_cleaned['author'].isin(whale_list).astype(int)
+
+# Flag where whales are mentioned
+whale_mention_counts = np.zeros(posts_raw_cleaned['body mentions'].shape[0])
+whale_mention_counts = np.zeros(posts_raw_cleaned['body mentions'].shape[0])
+for whale in whale_list:
+    whale_mention_counts += posts_raw_cleaned['body mentions'].str.count(whale).values
+posts_raw_cleaned['body whale mentions'] =whale_mention_counts
+
+# Add Language
+languages = []
+for language in posts_raw_cleaned['body_language']:
+    if (language != '[]') & pd.notnull(language):
+        languages.append(json.loads(language)[0]['language'])
+    else:
+        languages.append('unknown')
+
+posts_raw_cleaned['language'] = languages
+
+# Scale Author Reputation to put it a more reasonable scale
+posts_raw_cleaned['author_reputation_scaled'] = (posts_raw_cleaned[
+                                                     'author_reputation'] + 0.0) / (
+                                                10 ** 14)
 
 # change change this to load different types of data
-data,feature_names,data_desc = load_data_and_description(data_type='posts_tfidf')
+# data,feature_names,data_desc = load_data_and_description(data_type='posts_tfidf')
 
 # define which values you want to use
-featurestoadd = ['author_reputation','number of body urls', u'number of youtube urls','number of image urls', 'number of body tags', 'number of body mentions']
+# featurestoadd = ['author_reputation','number of body urls',
+#                  u'number of youtube urls','number of image urls',
+#                  'number of body tags', 'number of body mentions']
+#
 
-################################################
-# CREATE SECTION TO CLEAN THE DIFFERENT COLUMNS
-################################################
 
-# this can be somewhat static since the original features will not change
-new_features = data_desc[featurestoadd].as_matrix()
-
-new_data = np.column_stack((data, new_features))
-
-new_data.to_csv(new_feature_data_path,
+posts_raw_cleaned.to_csv(output_file,
                               index=False, 
                               quoting=csv.QUOTE_ALL, 
                               encoding='utf-8')
