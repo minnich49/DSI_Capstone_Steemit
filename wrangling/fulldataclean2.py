@@ -26,7 +26,7 @@ sample_data = False
 if sample_data:
     posts_path = os.path.join(data_directory,'sample_data.csv')
 else:
-    posts_path = os.path.join(data_directory,'all_posts.csv')
+    posts_path = os.path.join(data_directory,'all_posts0.csv')
 df_posts = pd.read_csv(posts_path)
 # Remove blank articles
 df_posts =  df_posts[df_posts['body'].notnull()]
@@ -146,8 +146,8 @@ expression = r'\b[A-Z]\b|\b[a-z]\b'
 df_posts['body'] = df_posts['body'].str.replace(expression,' ')
 
 posts_raw_cleaned = os.path.join(data_directory,
-                                             'posts_raw_cleaned',
-                                             'posts_raw_cleaned.csv')
+                                             'posts_raw_cleaned0',
+                                             'posts_raw_cleaned0.csv')
 print 'WRITING TO FILE'
 df_posts.to_csv(posts_raw_cleaned,
                               index=False,
