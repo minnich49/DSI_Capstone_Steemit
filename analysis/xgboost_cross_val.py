@@ -1,19 +1,6 @@
-
-import xgboost as xgb
-import numpy as np
-import pandas as pd
-import pymssql
 import pandas as pd
 import numpy as np
-import os
-import re
-import joblib
-import seaborn as sns
-import matplotlib.pylab as plt
 import scipy.sparse as ssp
-
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
 
 from DSI_Capstone_Steemit.utils.utils import(
     load_data_and_description,
