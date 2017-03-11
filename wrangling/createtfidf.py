@@ -48,9 +48,9 @@ tfidfvect = TfidfVectorizer(
 
 print 'READ IN DATA'
 # set the data path
-data_directory = '../data/'
+data_directory = '../data'
 
-
+print os.getcwd()
 posts_path = os.path.join(data_directory,
                           'posts_raw_cleaned',
                           'posts_raw_cleaned.csv') # full data set
@@ -62,7 +62,7 @@ print 'TFIDF'
 df_posts["body"].fillna(' ', inplace=True)
 posts_tfidf = tfidfvect.fit_transform(df_posts['body'])
 
-posts_tfidf_path = os.path.join(data_directory,'posts_tfidf')
+posts_tfidf_path = os.path.join(data_directory,'posts_tfidf0')
 
 joblib.dump(posts_tfidf,
             os.path.join(posts_tfidf_path,'posts_tfidf.pkl'))
@@ -83,7 +83,7 @@ print 'Counts'
 df_posts["body"].fillna(' ', inplace=True)
 posts_counts = countvect.fit_transform(df_posts['body'])
 
-posts_counts_path = os.path.join(data_directory,'posts_counts')
+posts_counts_path = os.path.join(data_directory,'posts_counts0')
 
 joblib.dump(posts_counts,
             os.path.join(posts_counts_path,'posts_counts.pkl'))
