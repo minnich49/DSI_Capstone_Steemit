@@ -7,6 +7,7 @@ from DSI_Capstone_Steemit.utils.utils import(
 )
 from sklearn.model_selection import train_test_split
 
+
 data,feature_names,data_desc = load_data_and_description(data_type='posts_tfidf')
 data_desc['log total_payout_value'] = np.log(data_desc['total_payout_value'])
 
