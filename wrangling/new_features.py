@@ -63,6 +63,20 @@ posts_raw_cleaned['author_reputation_scaled'] = (posts_raw_cleaned[
                                                      'author_reputation'] + 0.0) / (
                                                 10 ** 14)
 
+# Add Centrality Measure
+print('Loading Centrality')
+
+centrality_path = os.path.join('centrality_lookup',
+                               'centrality_lookup.csv')
+centrality = pd.read_csv(centrality_path)
+
+centrality_lookup = centrality.set_index('user').to_dict()['measure']
+posts_raw_cleaned['author centrality'] = posts_raw_cleaned['author'].map(centrality_lookup)
+
+# Cluster Lookup
+cluster_lookup = centrality.set_index('user').to_dict()['cluster']
+posts_raw_cleaned['cluster'] = posts_raw_cleaned['author'].map(cluster_lookup)
+
 # change change this to load different types of data
 # data,feature_names,data_desc = load_data_and_description(data_type='posts_tfidf')
 

@@ -41,7 +41,6 @@ train_features = data_desc.ix[:,['number of body tags',
                                    'number of steem counts',
                                 'top category']]
 
-
 train = pd.get_dummies(train_features)
 
 num_image_urls = train['number of image urls'].values[:,0]
@@ -60,9 +59,6 @@ number_of_samples = train.shape[0]
 
 X_train, X_test, y_train, y_test = train_test_split(
     train, y, test_size=0.33, random_state=42)
-
-
-
 
 import xgboost as xgb
 
@@ -88,7 +84,6 @@ def xgb_evaluate(min_child_weight,
              callbacks=[xgb.callback.early_stop(50)])
 
     return -cv_result['test-mae-mean'].values[-1]
-
 
 num_rounds = 10
 random_state = 2016
@@ -121,4 +116,3 @@ xgbBO.points_to_csv('bayesian_results.csv')
 import json
 with open('bayesian_results.json', 'w') as fp:
     json.dump(xgbBO.res, fp)
-

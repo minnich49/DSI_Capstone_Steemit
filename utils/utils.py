@@ -24,8 +24,8 @@ def check_for_dir_python_path():
         sys.path.insert(1, module_directory)
 
 def load_raw_cleaned():
-    posts_path = os.path.join(data_directory, 'posts_raw_cleaned',
-                              'posts_raw_cleaned.csv')
+    posts_path = os.path.join(data_directory, 'posts_cleaned_features',
+                              'posts_cleaned_features.csv')
     df_posts = pd.read_csv(posts_path)
     return df_posts
 def load_data_and_description(data_type = 'tfidf'):
