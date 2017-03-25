@@ -6,3 +6,6 @@ word2vec_models/
 *installodbc.sh
 .idea/
 *.pyc
+analysis/community/
+analysis/community_louvain.py
+analysis/community_status.py
