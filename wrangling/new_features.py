@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
 import os
-
 import csv
 import json
 import sys
-
+import joblib
 print 'READ IN DATA'
 # set the data path
 data_directory = '../data/'
@@ -14,8 +13,6 @@ data_directory = '../data/'
 data_directory = os.path.join('..' ,'data')
 
 authors = pd.read_csv(os.path.join(data_directory,'accounts.csv'))
-
-
 
 print os.path.join(data_directory,'accounts.csv')
 authors = pd.read_csv(os.path.join(data_directory,'accounts.csv'))
@@ -63,19 +60,28 @@ posts_raw_cleaned['author_reputation_scaled'] = (posts_raw_cleaned[
                                                      'author_reputation'] + 0.0) / (
                                                 10 ** 14)
 
-# Add Centrality Measure
+# Add Centrality Measures
 print('Loading Centrality')
+input_directory = 'networkx_votes'
 
-centrality_path = os.path.join('centrality_lookup',
-                               'centrality_lookup.csv')
-centrality = pd.read_csv(centrality_path)
+def load_joblib(filename):
+    return joblib.load(os.path.join(input_directory,filename))
 
-centrality_lookup = centrality.set_index('user').to_dict()['measure']
-posts_raw_cleaned['author centrality'] = posts_raw_cleaned['author'].map(centrality_lookup)
 
-# Cluster Lookup
-cluster_lookup = centrality.set_index('user').to_dict()['cluster']
-posts_raw_cleaned['cluster'] = posts_raw_cleaned['author'].map(cluster_lookup)
+hubs, authorities = load_joblib('hits')
+cluster = load_joblib('parts')
+pagerank = load_joblib('prank')
+eig_cent = load_joblib('eig_cent')
+core_k = load_joblib('core_k')
+
+posts_raw_cleaned['Cluster'] = posts_raw_cleaned['author'].map(cluster)
+posts_raw_cleaned.loc[:, 'Cluster'] = posts_raw_cleaned['Cluster']
+posts_raw_cleaned.loc[~posts_raw_cleaned['Cluster'].isin([1, 3, 0, 2, 5, 4]), 'Cluster Condense'] = 'Other'
+posts_raw_cleaned['Hubs'] = posts_raw_cleaned['author'].map(hubs) * 10000
+posts_raw_cleaned['Authorities'] = posts_raw_cleaned['author'].map(authorities) * 10000
+posts_raw_cleaned['Page Rank'] = posts_raw_cleaned['author'].map(pagerank) * 10000
+posts_raw_cleaned['Eigen Centrality'] = posts_raw_cleaned['author'].map(eig_cent) * 10000
+posts_raw_cleaned['Core K'] = posts_raw_cleaned['author'].map(core_k) * 10000
 
 # change change this to load different types of data
 # data,feature_names,data_desc = load_data_and_description(data_type='posts_tfidf')

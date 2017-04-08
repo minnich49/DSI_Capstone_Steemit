@@ -32,9 +32,10 @@ def load_data_and_description(data_type = 'tfidf'):
     # check_for_dir_python_path()
 
     if data_type == 'tfidf':
-        directory = 'posts_tfidf'
-        file_name = 'posts_tfidf.pkl'
-        feature_names = 'posts_tfidf_feature_names'
+        print 'Loading TFIDF Tags'
+        directory = 'tags_tfidf'
+        file_name = 'tags_tfidf.pkl'
+        feature_names = 'tags_tfidf_feature_names'
 
     elif data_type == 'word2vec':
         file_name = 'word2vec_doc_matrix_avg'
