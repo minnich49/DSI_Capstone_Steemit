@@ -86,28 +86,6 @@ posts_raw_cleaned['Authorities'] = posts_raw_cleaned['author'].map(authorities) 
 posts_raw_cleaned['Page Rank'] = posts_raw_cleaned['author'].map(pagerank) * 10000
 posts_raw_cleaned['Eigen Centrality'] = posts_raw_cleaned['author'].map(eig_cent) * 10000
 posts_raw_cleaned['Core K'] = posts_raw_cleaned['author'].map(core_k) * 10000
-# Add Centrality Measure
-print('Loading Centrality')
-
-centrality_path = os.path.join('centrality_lookup',
-                               'centrality_lookup.csv')
-centrality = pd.read_csv(centrality_path)
-
-centrality_lookup = centrality.set_index('user').to_dict()['measure']
-posts_raw_cleaned['author centrality'] = posts_raw_cleaned['author'].map(centrality_lookup)
-
-# Cluster Lookup
-cluster_lookup = centrality.set_index('user').to_dict()['cluster']
-posts_raw_cleaned['cluster'] = posts_raw_cleaned['author'].map(cluster_lookup)
-
-# change change this to load different types of data
-# data,feature_names,data_desc = load_data_and_description(data_type='posts_tfidf')
-
-# define which values you want to use
-# featurestoadd = ['author_reputation','number of body urls',
-#                  u'number of youtube urls','number of image urls',
-#                  'number of body tags', 'number of body mentions']
-#
 
 
 posts_raw_cleaned.to_csv(output_file,
