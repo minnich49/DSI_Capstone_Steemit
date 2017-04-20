@@ -85,3 +85,6 @@ for index, row in df_timeseries.iterrows():
         val = 0
     trending_score.append(val) 
 
+
+df_timeseries['trending'] = trending_score
+df_timeseries['trending'].to_csv("'../data/timeseries/timeseries.csv", header=None)
