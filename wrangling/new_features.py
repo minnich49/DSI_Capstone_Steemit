@@ -12,8 +12,6 @@ import sys
 print 'READ IN DATA'
 # set the data path
 data_directory = '../data/'
-
-data_directory = '../data/'
 data_directory = os.path.join('..' ,'data')
 
 authors = pd.read_csv(os.path.join(data_directory,'accounts.csv'))
@@ -87,6 +85,10 @@ posts_raw_cleaned['Page Rank'] = posts_raw_cleaned['author'].map(pagerank) * 100
 posts_raw_cleaned['Eigen Centrality'] = posts_raw_cleaned['author'].map(eig_cent) * 10000
 posts_raw_cleaned['Core K'] = posts_raw_cleaned['author'].map(core_k) * 10000
 
+# Add time series feature
+
+timeseries = pd.read_csv('timeseries/timeseries.csv', header=None)
+posts_raw_cleaned['trending'] = timeseries
 
 posts_raw_cleaned.to_csv(output_file,
                               index=False, 
