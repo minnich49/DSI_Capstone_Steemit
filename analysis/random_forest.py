@@ -19,8 +19,11 @@ from bayes_opt import BayesianOptimization
 data_directory = '../data/'
 
 data,feature_names,data_desc = load_data_and_description(data_type='tags_tfidf')
-# print 'median', np.median(np.log(data_desc['total_payout_value']))
 
+timeseries = pd.read_csv('/Users/laurenmccarthy/Documents/Columbia/Capstone/DSI_Capstone_Steemit/data/timeseries/timeservies.csv', header=None)
+
+# print 'median', np.median(np.log(data_desc['total_payout_value']))
+print 'new data features', data_desc.columns
 data_desc['log total_payout_value'] = np.log(data_desc['total_payout_value'])
 idx1 = data_desc['log total_payout_value'] < 1.2
 idx2 = data_desc['log total_payout_value'] >2.5
@@ -46,6 +49,9 @@ data_desc['top category listed'] = data_desc['top category listed'].fillna('Othe
 
 # some of the values were null -- filled them in with 0
 data_desc['number of steem counts'] = data_desc['number of steem counts'].fillna(0)
+data_desc['author centrality'] = data_desc['author centrality'].fillna(0)
+data_desc['cluster'] = data_desc['cluster'].fillna(0)
+data_desc['trending'] = timeseries
 
 
 new_featurenames = ['number of body tags',
@@ -57,7 +63,11 @@ new_featurenames = ['number of body tags',
   'language',
   'author_reputation_scaled',
   'number of steem counts',
-  'top category listed']
+  'top category listed',
+  'trending']
+
+    # 'author centrality',
+  # 'cluster'
 train_features = data_desc[new_featurenames]
 
 # #['number of body tags',
@@ -141,6 +151,10 @@ print 'score test:', model.score(X_test, y_test)
 
 columnnames = feature_names + new_featurenames
 
+# print features_names == 'author centrality'
+# print feat
+  # 'cluster'
+
 
 sorted_fi, sorted_cn = zip(
   *sorted(
@@ -149,6 +163,9 @@ sorted_fi, sorted_cn = zip(
   )
 )
 
+# find the index of the feature in the list
+sorted_fi == 'author centrality'
+sorted_cn
 
 print 'creating top features'
 top_features = sorted_fi[:25]
