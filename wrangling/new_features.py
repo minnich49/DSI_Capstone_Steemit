@@ -90,6 +90,46 @@ posts_raw_cleaned['Core K'] = posts_raw_cleaned['author'].map(core_k) * 10000
 timeseries = pd.read_csv('timeseries/timeseries.csv', header=None)
 posts_raw_cleaned['trending'] = timeseries
 
+
+########################################
+print 'Calculating Gradients'
+# Add Gradients
+category = posts_raw_cleaned.ix[:, ['created', 'category']]
+category = category.set_index('created')
+category = pd.get_dummies(category, prefix='', prefix_sep='')
+category.index = pd.DatetimeIndex(category.index)
+
+# Number of days to group by
+number_of_days = 3
+category = category.resample(str(number_of_days) + 'D').sum()
+x_array = range(category.shape[0] * number_of_days)
+x_array = x_array[0::number_of_days]
+
+for cat in category.columns:
+    y = category[cat].values
+    slopes = np.array([0] + list(np.diff(y[::1]) / np.diff(x_array[::1])))
+    category[cat] = slopes
+
+# Get current row and category and date
+
+for row in posts_raw_cleaned.index:
+
+    row_category = posts_raw_cleaned.ix[row, 'category']
+    if pd.notnull(row_category):
+        row_date = posts_raw_cleaned.ix[row, 'created']
+        # From post data, find closest date
+        try:
+            closest_date = category.index.get_loc(pd.to_datetime(row_date),
+                                                  method='ffill')
+            closest_gradient = category.ix[closest_date, row_category]
+            posts_raw_cleaned.loc[row, 'Gradient'] = closest_gradient
+        except:
+            posts_raw_cleaned.loc[row, 'Gradient'] = 0
+            # print 'Did not work for ', row_date, row_category
+
+posts_raw_cleaned['Gradient'] = posts_raw_cleaned['Gradient'].fillna(0)
+########################################
+
 posts_raw_cleaned.to_csv(output_file,
                               index=False, 
                               quoting=csv.QUOTE_ALL, 
