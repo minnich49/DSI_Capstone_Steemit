@@ -48,14 +48,14 @@ def load_data_and_description(data_type = 'tfidf'):
 
     desc_file = os.path.join(data_directory,
                              'posts_cleaned_features',
-                             'posts_cleaned_features.csv')
+                             'posts_cleaned_features2.pkl')
 
 
     data_path = os.path.join(data_directory,directory,file_name)
     feature_path = os.path.join(data_directory,directory,feature_names)
 
     data = joblib.load(data_path)
-    data_desc = pd.read_csv(desc_file)
+    data_desc = joblib.load(desc_file)
 
     # Do not have feature names for word2vec matrices
     if data_type == 'word2vec':
